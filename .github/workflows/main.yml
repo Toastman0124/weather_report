@@ -1,0 +1,28 @@
+name: Daily Weather Push
+
+on:
+  schedule:
+    # 每天 UTC 12:00 執行 (等於北京/台北時間 20:00)
+    - cron: '0 12 * * *'
+  workflow_dispatch: # 允許手動測試執行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run script
+        env:
+          SERVER_JANG_KEY: ${{ secrets.SERVER_JANG_KEY }}
+          WECOM_ROBOT_KEY: ${{ secrets.WECOM_ROBOT_KEY }}
+        run: python weather_report.py
